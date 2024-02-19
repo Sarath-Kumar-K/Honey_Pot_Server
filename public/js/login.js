@@ -59,6 +59,11 @@ function update_log() {
       Ip_log_count = data.length + 1;
       tempobj.id = Ip_log_count;
       tempobj.User_image = Ip_log_count + ipAddress + ".jpg";
+      // if(Array.isArray(data)){
+      //   console.log("Data returned by route /ip_logs is an array");
+      // }else{
+      //   console.log("Data returned by route /ip_logs is not an array");
+      // }
       data.push(tempobj);
 
       // Send the modified array back to the server
@@ -83,6 +88,7 @@ function update_log() {
 }
 
 function captureAndStoreImages(image_id) {
+  console.log(`image at the capturing function request` + image_id);
   // Update the URL to match your server's address and port
   const serverURL = "http://localhost:8000";
 
