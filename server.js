@@ -15,6 +15,9 @@ app.listen(port, () => {
 // Serve your HTML, CSS, and JS files from the 'public' folder
 app.use(express.static(path.join(__dirname, 'public')));
 
+// middleware to parse json data
+app.use(express.json());
+
 // Set 'views' directory for EJS files
 app.set('views', path.join(__dirname, 'views'));
 
@@ -47,10 +50,10 @@ app.get('/data.json', (req, res) => {
 });
 
 // Endpoint to run the Python script
-// Unique id number every image 
-let image_id = 1;
+
 app.get('/capture-image', (req, res) => {
     const pythonScriptPath = path.join(__dirname, 'scripts/CaptureImage.py');
+    let image_id = req.query.id;
     let filename = image_id + "_" + constantIP + ".jpg";
 
     const pythonProcess = exec(`python ${pythonScriptPath} ${filename}`, (error, stdout, stderr) => {
@@ -70,9 +73,9 @@ app.get('/capture-image', (req, res) => {
     });
 });
 
+// Read the content of fraud_ip_log.json file rout
 
 app.get('/ip_logs', (req, res) => {
-    // Read the content of fraud_ip_log.json file
     const filePath = path.join(__dirname, 'fraud_ip_log.json');
 
     fs.readFile(filePath, 'utf-8', (err, data) => {
@@ -91,5 +94,25 @@ app.get('/ip_logs', (req, res) => {
         }
     });
 });
+
+// update the fraud_ip_log file route
+
+app.post('/update_ip_logs', (req, res) => {
+    // Get the modified array from the request body
+    const updatedData = req.body;
+  
+    // Write the updated array back to the fraud_ip_log.json file
+    const filePath = path.join(__dirname, 'fraud_ip_log.json');
+    fs.writeFile(filePath, JSON.stringify(updatedData), 'utf-8', (err) => {
+      if (err) {
+        console.error('Error updating fraud_ip_log.json:', err);
+        res.status(500).send('Internal Server Error');
+      } else {
+        console.log('IP logs updated successfully');
+        res.json(updatedData);
+      }
+    });
+  });
+  
 
 
