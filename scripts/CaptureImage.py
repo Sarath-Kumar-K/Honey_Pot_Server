@@ -18,7 +18,7 @@ def capture_image(filename):
     if ret:
         img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-        directory = "../Captured-images"
+        directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../Captured-images")
         if not os.path.exists(directory):
             os.makedirs(directory)
 

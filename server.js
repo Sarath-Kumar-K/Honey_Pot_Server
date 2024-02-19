@@ -13,7 +13,7 @@ app.listen(port, () => {
 
 
 // Serve your HTML, CSS, and JS files from the 'public' folder
-// app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Set 'views' directory for EJS files
 app.set('views', path.join(__dirname, 'views'));
@@ -37,16 +37,21 @@ app.get('/', (req, res) => {
     // You can use the IP address to customize your response or perform other actions
     // console.log(`Request from IP address: ${clientIP}`);
 
-    // Serve the 'index.html' file
-    res.sendFile(path.join(__dirname, 'views/index.ejs'), { constantIP });
+     // Render the 'index' EJS view and pass the constantIP variable
+     res.render('index', { constantIP });
+});
+
+// route to access to data.json
+app.get('/data.json', (req, res) => {
+    res.sendFile(path.join(__dirname, '/data.json'));
 });
 
 // Endpoint to run the Python script
 // Unique id number every image 
 let image_id = 1;
-app.get('/capture-images', (req, res) => {
+app.get('/capture-image', (req, res) => {
     const pythonScriptPath = path.join(__dirname, 'scripts/CaptureImage.py');
-    let filename = image_id + constantIP + ".jpg"
+    let filename = image_id + "_" + constantIP + ".jpg";
 
     const pythonProcess = exec(`python ${pythonScriptPath} ${filename}`, (error, stdout, stderr) => {
         if (error) {
@@ -55,7 +60,7 @@ app.get('/capture-images', (req, res) => {
             res.status(500).json({ success: false, error: 'Failed to capture images' });
         } else {
             image_id = image_id + 1;
-            res.status(200).json({ success: true, message: 'Image captured successfully' });
+            res.status(200).json({ success: true, message: 'Image captured and stored successfully' });
         }
     });
 

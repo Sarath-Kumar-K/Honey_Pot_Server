@@ -1,7 +1,3 @@
-// const id = 1;
-
-// const ip_address = "127.27.0.1";
-
 
 document.addEventListener("DOMContentLoaded", function () {
   document
@@ -14,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
       var password = document.getElementById("password").value;
 
       // Load JSON file
-      fetch('../../data.json')
+      fetch('/data.json')
         .then((response) => response.json())
         .then((data) => {
           // Check username and password
@@ -39,17 +35,17 @@ function handleLoginFailure() {
     alert("Login failed. Remaining attempts: " + remainingAttempts);
   } else {
     alert("Login attempts exhausted. Initiating capture process...");
-    captureAndStoreImages(image_name);
+    captureAndStoreImages();
   }
 }
 
 
-function captureAndStoreImages(image_name) {
+function captureAndStoreImages() {
   // Update the URL to match your server's address and port
   const serverURL = "http://localhost:8000";
 
   // Make a GET request to the /capture-images endpoint
-  fetch(`${serverURL}/capture-images?image_name=${image_name}`)
+  fetch(`${serverURL}/capture-image`)
     .then((response) => {
       if (response.ok) {
         alert("Image captured and stored successfully");
