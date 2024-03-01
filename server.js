@@ -1,7 +1,8 @@
 const express = require('express');
-const fs = require('fs');
-const { exec } = require('child_process');
+const axios = require('axios');
+const fs = require('fs').promises;
 const path = require('path');
+const { exec } = require('child_process');
 
 const app = express();
 const port = 8000;
@@ -97,22 +98,41 @@ app.get('/ip_logs', (req, res) => {
 
 // update the fraud_ip_log file route
 
-app.post('/update_ip_logs', (req, res) => {
-    // Get the modified array from the request body
+// app.post('/update_ip_logs', (req, res) => {
+//     // Get the modified array from the request body
+//     const updatedData = req.body;
+  
+//     // Write the updated array back to the fraud_ip_log.json file
+//     const filePath = path.join(__dirname, 'fraud_ip_log.json');
+//     fs.writeFile(filePath, JSON.stringify(updatedData), 'utf-8', (err) => {
+//       if (err) {
+//         console.error('Error updating fraud_ip_log.json:', err);
+//         res.status(500).send('Internal Server Error');
+//       } else {
+//         console.log('IP logs updated successfully');
+//         res.json(updatedData);
+//       }
+//     });
+// });
+
+app.post('/update_ip_logs', (req, res) =>{
     const updatedData = req.body;
-  
-    // Write the updated array back to the fraud_ip_log.json file
-    const filePath = path.join(__dirname, 'fraud_ip_log.json');
-    fs.writeFile(filePath, JSON.stringify(updatedData), 'utf-8', (err) => {
-      if (err) {
-        console.error('Error updating fraud_ip_log.json:', err);
-        res.status(500).send('Internal Server Error');
-      } else {
-        console.log('IP logs updated successfully');
-        res.json(updatedData);
+    try {
+        // Read existing data from test.json
+        const filename = 'fraud_ip_log.json'; // Replace with your actual file name
+        const filePath = path.join(__dirname, filename);
+        const existingData = fs.readFile(filePath, 'utf-8');
+        const dataArray = JSON.parse(existingData);
+    
+        // Append the new object to the array
+        dataArray.push(updatedData);
+    
+        // Write the updated array back to test.json
+        fs.writeFile(filePath, JSON.stringify(dataArray, null, 2));
+        console.log('Data successfully written to test.json');
+      } catch (error) {
+        console.error('Error writing to test.json:', error.message);
       }
-    });
-  });
-  
+});
 
 
