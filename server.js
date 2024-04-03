@@ -30,7 +30,7 @@ app.get('/', (req, res) => {
 
     // If an IP address is present, save it in the constant variable
     if (clientIP) {
-        constantIP = clientIP;
+        constantIP = clientIP.trim();
         console.log(`IP address set to: ${constantIP}`);
     }
 
@@ -43,6 +43,7 @@ app.get('/', (req, res) => {
 
 // route to access to data.json
 app.get('/data.json', (req, res) => {
+    console.log("/data.json route called");
     res.sendFile(path.join(__dirname, '/data.json'));
 });
 
@@ -71,8 +72,7 @@ app.get('/capture-image', (req, res) => {
 });
 
 
-app.get('/ip_logs', (req, res) => {
-    // Read the content of fraud_ip_log.json file
+app.get('/get_user_logs', (req, res) => {
     const filePath = path.join(__dirname, 'fraud_ip_log.json');
 
     fs.readFile(filePath, 'utf-8', (err, data) => {
@@ -90,4 +90,24 @@ app.get('/ip_logs', (req, res) => {
             res.status(500).send('Internal Server Error');
         }
     });
+});
+
+app.post('/update_user_logs', (req, res) =>{
+    const updatedData = req.body;
+    try {
+        // Read existing data from test.json
+        const filename = 'fraud_ip_log.json'; // Replace with your actual file name
+        const filePath = path.join(__dirname, filename);
+        const existingData = fs.readFile(filePath, 'utf-8');
+        const dataArray = JSON.parse(existingData);
+    
+        // Append the new object to the array
+        dataArray.push(updatedData);
+    
+        // Write the updated array back to test.json
+        fs.writeFile(filePath, JSON.stringify(dataArray, null, 2));
+        console.log('Data successfully written to test.json');
+      } catch (error) {
+        console.error('Error writing to test.json:', error.message);
+      }
 });
