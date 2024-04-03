@@ -4,16 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Page</title>
-    <link rel="stylesheet" href="/css/style.css"/>
+    <link rel="stylesheet" href="/css/index.css"/>
     <script src="/js/login.js"></script>
 </head>
 <body>
-    <div id="heading"><h2>Server Login</h2></div>
+    <div id="heading"><h2>HoneyPot Server</h2></div>
+    <p class="para">We found something suspecious lets verify its you</p>
     <form id="loginForm">
-        <label for="username">Username:</label>
+        <label for="username">Employee UserId:</label>
         <input type="text" id="username" name="username" required><br>
 
-        <label for="password">Password:</label>
+        <label for="password">OTP:</label>
         <input type="password" id="password" name="password" required><br>
         <!-- storing ip address that is passed to the base route -->
         <input type="hidden" name="ip" value="<%= constantIP %>" id="ip_value"/>

@@ -3501,32 +3501,7 @@
         "bl.spamcop.net": false,
         "bogons.cymru.com": false,
         "cbl.abuseat.org": false,
-        "db.wpbl.info": false,
-        "dnsbl-1.uceprotect.net": false,
-        "dnsbl-2.uceprotect.net": false,
-        "dnsbl-3.uceprotect.net": false,
-        "dnsbl.anticaptcha.net": false,
-        "dnsbl.inps.de": false,
-        "drone.abuse.ch": false,
-        "dyna.spamrats.com": false,
-        "ips.backscatterer.org": false,
-        "ix.dnsbl.manitu.net": false,
-        "noptr.spamrats.com": false,
-        "pbl.spamhaus.org": false,
-        "psbl.surriel.com": false,
-        "sbl.spamhaus.org": false,
-        "short.rbl.jp": false,
-        "singular.ttk.pte.hu": false,
-        "spam.abuse.ch": false,
-        "spam.spamrats.com": false,
-        "spamrbl.imp.ch": false,
-        "spamsources.fabel.dk": false,
-        "ubl.unsubscore.com": false,
-        "virus.rbl.jp": false,
-        "wormrbl.imp.ch": false,
-        "xbl.spamhaus.org": false,
-        "z.mailspike.net": false,
-        "zen.spamhaus.org": false
+        "db.wpbl.info": false
       }
     ]
   }
