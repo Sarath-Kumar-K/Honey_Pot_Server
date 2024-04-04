@@ -1,14 +1,10 @@
-// const axios = require('axios');
-// const fs = require('fs').promises;
-// const path = require('path');
-
-
 let tempobj = {
-  username_used: [],
-  password_used: []
+  Id:null,
+  IP_Address:null,
+  Employee_UserIDs_used: [],
+  OTPs_used: [],
+  User_Image_File:null
 };
-let Ip_log_count = 0;
-let ipAddress = null;
 
 document.addEventListener("DOMContentLoaded", function () {
   document
@@ -19,9 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
       // Fetching user input
       var username = document.getElementById("username").value;
       var password = document.getElementById("password").value;
-      ipAddress = document.getElementById("ip_value").value;
-      tempobj.ip = ipAddress;
-
+      tempobj.IP_Address = document.getElementById("ip_value").value;
       // Load JSON file
       fetch("/data.json")
         .then((response) => response.json())
@@ -41,8 +35,8 @@ document.addEventListener("DOMContentLoaded", function () {
 var attempts = 0;
 
 function handleLoginFailure(username, password) {
-  tempobj.username_used[attempts] = username;
-  tempobj.password_used[attempts] = password;
+  tempobj.Employee_UserIDs_used[attempts] = username;
+  tempobj.OTPs_used[attempts] = password;
   attempts++;
   //   attempts_log(username,password,attempts).then(res=> console.log("Logs updated"));
   var remainingAttempts = 3 - attempts;
@@ -50,30 +44,22 @@ function handleLoginFailure(username, password) {
   if (remainingAttempts > 0) {
     alert("Login failed. Remaining attempts: " + remainingAttempts);
   } else {
-    update_log();
+    update_users_log();
     alert("Login attempts exhausted. Initiating capture process...");
-    captureAndStoreImages(Ip_log_count);
+    captureAndStoreImages();
   }
 }
 
-function update_log() {
-  fetch("/get_user_logs")
+function update_users_log() {
+  fetch("/get_users_log")
     .then((response) => response.json())
     .then((data) => {
-      // Modify the array by pushing a new object
-      Ip_log_count = data.length + 1;
-      tempobj.id = Ip_log_count;
-      tempobj.User_image = Ip_log_count + ipAddress + ".jpg";
-      // if(Array.isArray(data)){
-      //   console.log("Data returned by route /ip_logs is an array");
-      // }else{
-      //   console.log("Data returned by route /ip_logs is not an array");
-      // }
-      // main();
+      tempobj.Id = data.length + 1;
+      tempobj.User_Image_File = tempobj.Id +"_"+ tempobj.IP_Address + ".jpg";
       data.push(tempobj);
 
       // Send the modified array back to the server
-      fetch("/update_user_logs", {
+      fetch("/update_users_log", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -82,24 +68,23 @@ function update_log() {
       })
         .then((response) => response.json())
         .then((updatedData) => {
-          console.log("Updated IP logs:", updatedData);
+          console.log("Updated Users log:", updatedData);
         })
         .catch((error) => {
-          console.error("Error updating IP logs:", error);
+          console.error("Error updating Users log:", error);
         });
     })
     .catch((error) => {
-      console.error("Error fetching IP logs:", error);
+      console.error("Error fetching Users log:", error);
     });
 }
 
-function captureAndStoreImages(image_id) {
-  console.log(`image at the capturing function request` + image_id);
+function captureAndStoreImages() {
   // Update the URL to match your server's address and port
   const serverURL = "http://localhost:8000";
 
   // Make a GET request to the /capture-images endpoint
-  fetch(`${serverURL}/capture-image?id=${image_id}`)
+  fetch(`${serverURL}/capture-image`)
     .then((response) => {
       if (response.ok) {
         alert("Image captured and stored successfully");
@@ -117,57 +102,17 @@ function captureAndStoreImages(image_id) {
     });
 }
 
-// const HOST = "https://api.whatismyip.com/";
-// const TOOL_FILE_NAME = [ "proxy.php?", "ip-address-lookup.php?", "domain-black-list.php?", "host-name.php?", "whois.php?", "user-agent.php?"];
-// const OUTPUT_FORMAT = "&output=json";
-// const INPUT = `&input=${ipAddress}`;
-// const API_KEY = "key=eb5fee85322e9bc7822bf0040709e653";
-// const TEST_JSON_FILE = 'test.json';
-
-// async function makeApiCall(toolFileName) {
-//   const apiUrl = `${HOST}${toolFileName}${API_KEY}${INPUT}${OUTPUT_FORMAT}`;
-//   try {
-//     const response = await axios.get(apiUrl);
-//     return response.data;
-//   } catch (error) {
-//     console.error(`Error making API call for ${toolFileName}: ${error.message}`);
-//     return null;
-//   }
-// }
-
-// async function updateObjectWithApiResponse(toolFileName) {
-//   const response = await makeApiCall(toolFileName);
-//   if (response) {
-//     if (toolFileName === 'proxy.php?') {
-//       tempobj = { ...obj, ...{ 'proxy-check': response['proxy-check'] } };
-//     } else {
-//       obj = { ...obj, ...response };
-//     }
-//   }
-// }
-
-// async function writeToTestJson() {
-//   try {
-//     // Read existing data from test.json
-//     const filename = 'test.json'; // Replace with your actual file name
-//     const filePath = path.join(__dirname, filename);
-//     const existingData = await fs.readFile(filePath, 'utf-8');
-//     const dataArray = JSON.parse(existingData);
-
-//     // Append the new object to the array
-//     dataArray.push(obj);
-
-//     // Write the updated array back to test.json
-//     await fs.writeFile(filePath, JSON.stringify(dataArray, null, 2));
-//     console.log('Data successfully written to test.json');
-//   } catch (error) {
-//     console.error('Error writing to test.json:', error.message);
-//   }
-// }
-
-// async function main() {
-//   for (const toolFileName of TOOL_FILE_NAME) {
-//     await updateObjectWithApiResponse(toolFileName);
-//   }
-
+// function update_IPs_log(){
+//   fetch(`/update_IPs_log?id=${tempobj.Id}`)
+//     .then((response) => response.json())
+//     .then((data) => {
+//       if(data.success === true){
+//         console.log("Updated IPs log Successfully");
+//       }else{
+//         console.log("Failed to Update IPs log");
+//       }
+//     })
+//   .catch((error) => {
+//       console.error("Error updating IPs logs:", error);
+//   });
 // }

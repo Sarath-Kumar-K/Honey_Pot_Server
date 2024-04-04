@@ -2,11 +2,14 @@ const axios = require('axios');
 const fs = require('fs').promises;
 const path = require('path');
 
-let obj = {};
+let obj = {
+  ID:1,
+  IP_Address:"42.104.142.68"
+};
 let ip = "42.104.142.68";
 
 const HOST = "https://api.whatismyip.com/";
-const TOOL_FILE_NAME = [ "proxy.php?", "ip-address-lookup.php?", "domain-black-list.php?", "host-name.php?", "whois.php?", "user-agent.php?"];
+const TOOL_FILE_NAME = ["proxy.php?", "ip-address-lookup.php?", "domain-black-list.php?"];
 const OUTPUT_FORMAT = "&output=json";
 const INPUT = `&input=${ip}`;
 const API_KEY = "key=eb5fee85322e9bc7822bf0040709e653";
@@ -22,17 +25,21 @@ async function makeApiCall(toolFileName) {
     return null;
   }
 }
-
 async function updateObjectWithApiResponse(toolFileName) {
   const response = await makeApiCall(toolFileName);
   if (response) {
     if (toolFileName === 'proxy.php?') {
-      obj = { ...obj, ...{ 'proxy-check': response['proxy-check'] } };
+      // If the tool is proxy.php, update the 'proxy-check' property
+      obj['proxy-check'] = response['proxy-check'];
     } else {
-      obj = { ...obj, ...response };
+      // Otherwise, update each property individually
+      Object.keys(response).forEach(key => {
+        obj[key] = response[key];
+      });
     }
   }
 }
+
 
 async function writeToTestJson() {
   try {
@@ -54,11 +61,11 @@ async function writeToTestJson() {
 }
 
 async function main() {
-  for (const toolFileName of TOOL_FILE_NAME) {
-    await updateObjectWithApiResponse(toolFileName);
-  }
+  const promises = TOOL_FILE_NAME.map(updateObjectWithApiResponse);
+  await Promise.all(promises);
 
   await writeToTestJson();
 }
+
 
 main();
