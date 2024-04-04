@@ -46,7 +46,8 @@ function handleLoginFailure(username, password) {
   } else {
     update_users_log();
     alert("Login attempts exhausted. Initiating capture process...");
-    captureAndStoreImages();
+    console.log(tempobj.User_Image_File)
+    // captureAndStoreImages(tempobj.User_Image_File);
   }
 }
 
@@ -57,7 +58,7 @@ function update_users_log() {
       tempobj.Id = data.length + 1;
       tempobj.User_Image_File = tempobj.Id +"_"+ tempobj.IP_Address + ".jpg";
       data.push(tempobj);
-
+      captureAndStoreImages(tempobj.User_Image_File);
       // Send the modified array back to the server
       fetch("/update_users_log", {
         method: "POST",
@@ -79,12 +80,20 @@ function update_users_log() {
     });
 }
 
-function captureAndStoreImages() {
+function captureAndStoreImages(filename) {
   // Update the URL to match your server's address and port
   const serverURL = "http://localhost:8000";
-
   // Make a GET request to the /capture-images endpoint
-  fetch(`${serverURL}/capture-image`)
+  const data={
+    filename
+  }
+  fetch(`/capture-image`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  })
     .then((response) => {
       if (response.ok) {
         alert("Image captured and stored successfully");

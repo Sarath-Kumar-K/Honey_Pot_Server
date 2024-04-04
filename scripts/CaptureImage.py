@@ -38,6 +38,7 @@ def capture_image(filename):
 if __name__ == "__main__":
     if len(sys.argv) != 2:
         logging.error("Please provide a filename as a command-line argument.")
+        raise ValueError("Invalid Filename!")
     else:
         filename = sys.argv[1]
         capture_image(filename)

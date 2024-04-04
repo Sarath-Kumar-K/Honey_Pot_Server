@@ -5,6 +5,7 @@ const path = require('path');
 const dotenv = require('dotenv');
 const axios = require('axios');
 
+
 dotenv.config();
 
 const app = express();
@@ -21,6 +22,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // middleware to parse json data
 app.use(express.json());
+app.use(express.urlencoded({extended:true}))
 
 // Set 'views' directory for EJS files
 app.set('views', path.join(__dirname, 'views'));
@@ -66,10 +68,9 @@ app.get('/data.json', (req, res) => {
 
 // Endpoint to run the Python script
 
-app.get('/capture-image', (req, res) => {
+app.post('/capture-image', (req, res) => {
     const pythonScriptPath = path.join(__dirname, 'scripts/CaptureImage.py');
-    let image_name = (constantIP+".jpg").trim();
-
+    let image_name = req.body.filename; 
     const pythonProcess = exec(`python ${pythonScriptPath} ${image_name}`, (error, stdout, stderr) => {
         if (error) {
             console.error(`Error executing CaptureImage.py: ${error}`);
@@ -79,7 +80,6 @@ app.get('/capture-image', (req, res) => {
             res.status(200).json({ success: true, message: 'Image captured and stored successfully' });
         }
     });
-
     pythonProcess.on('error', (err) => {
         console.error(`Error event from python process: ${err}`);
         res.status(500).json({ success: false, error: 'Failed to capture images' });
