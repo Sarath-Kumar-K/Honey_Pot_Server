@@ -24,6 +24,9 @@ document.addEventListener("DOMContentLoaded", function () {
           if (data["username"] === username && data["password"] === password) {
             tempobj = {};
             alert("Login successful!");
+            // redirection to a production server
+            location.replace("https://sarath-kumar.vercel.app/");
+            
           } else {
             handleLoginFailure(username, password);
           }
